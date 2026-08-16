@@ -1,0 +1,22 @@
+# Not generated. golden-argocd builds and publishes the chart; pointing a
+# cluster at it is the cluster's business, so this lives here as the example.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: flake-hub-example-service
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: 000000000000.dkr.ecr.us-east-1.amazonaws.com
+    chart: charts/flake-hub-example-service
+    targetRevision: 0.1.0
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: flake-hub-example-service
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

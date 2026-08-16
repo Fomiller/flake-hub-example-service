@@ -13,7 +13,13 @@ generate:
     nix run .#generate
 
 build:
-    go build ./...
+    go build -o bin/ ./src/...
 
 test:
-    go test ./... -race -cover
+    go test ./src/... -race -cover
+
+plan env="dev":
+    cd infra/live/{{env}} && terragrunt run-all plan
+
+apply env="dev":
+    cd infra/live/{{env}} && terragrunt run-all apply

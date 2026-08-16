@@ -1,0 +1,7 @@
+# Written once, then it is yours. `nix run .#generate` never touches it again.
+
+replicas: 2
+
+image:
+  repository: charts/flake-hub-example-service
+  tag: latest

@@ -1,10 +1,7 @@
-# GENERATED FILE — managed by flake-hub (golden-base).
+# GENERATED FILE — managed by flake-hub (golden-infra).
 # Do not edit manually: `nix run .#generate` overwrites it.
 # To change it, edit repo.nix, or the template in the pack that owns it.
 
-result
-result-*
-.direnv/
-.DS_Store
-bin/
-target/
+locals {
+  repo_name = "flake-hub-example-service"
+}

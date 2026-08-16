@@ -7,7 +7,7 @@ WORKDIR /src
 COPY go.mod go.sum ./
 RUN go mod download
 COPY . .
-RUN CGO_ENABLED=0 go build -o /out/flake-hub-example-service ./cmd/flake-hub-example-service
+RUN CGO_ENABLED=0 go build -o /out/flake-hub-example-service ./src/cmd/flake-hub-example-service
 
 FROM gcr.io/distroless/static-debian12
 COPY --from=build /out/flake-hub-example-service /flake-hub-example-service

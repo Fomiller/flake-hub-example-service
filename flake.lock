@@ -375,17 +375,17 @@
       },
       "locked": {
         "dir": "golden-argocd",
-        "lastModified": 1786907278,
-        "narHash": "sha256-LXjtzEepZKh4iKbFfZQrC1l/icEMArgiQS8VNYQyIJE=",
+        "lastModified": 1786911301,
+        "narHash": "sha256-b1TFllcG4yFX+AG90swgNmlv/5v/ys5q+7Tvp4/khh4=",
         "owner": "Fomiller",
         "repo": "flake-hub",
-        "rev": "1f55e133b1c67e0265d4eccebd8c8a696014839e",
+        "rev": "9206da2f7efff1034e8f1ccd7722abd3629e2933",
         "type": "github"
       },
       "original": {
         "dir": "golden-argocd",
         "owner": "Fomiller",
-        "ref": "refs/tags/golden-argocd-0.1.0",
+        "ref": "refs/tags/golden-argocd-0.2.1",
         "repo": "flake-hub",
         "type": "github"
       }
@@ -497,17 +497,17 @@
       },
       "locked": {
         "dir": "golden-base",
-        "lastModified": 1786909084,
-        "narHash": "sha256-QR2WoAJ6u0qDmrxHI2KNOPew0w14qlS6KIMDeCnF2nc=",
+        "lastModified": 1786910990,
+        "narHash": "sha256-DUKtXIVfy9AXTm9YPkTW6Orh07D4H1Vl9JFc1ubOz6Q=",
         "owner": "Fomiller",
         "repo": "flake-hub",
-        "rev": "30db2c995f4b944982420ca4c5674126100630d4",
+        "rev": "00c47a392aa283e0f5a8eebac7b832fea65b395c",
         "type": "github"
       },
       "original": {
         "dir": "golden-base",
         "owner": "Fomiller",
-        "ref": "refs/tags/golden-base-0.2.0",
+        "ref": "refs/tags/golden-base-0.2.1",
         "repo": "flake-hub",
         "type": "github"
       }
@@ -777,17 +777,17 @@
     "golden-engine_8": {
       "locked": {
         "dir": "golden-engine",
-        "lastModified": 1786907278,
-        "narHash": "sha256-LXjtzEepZKh4iKbFfZQrC1l/icEMArgiQS8VNYQyIJE=",
+        "lastModified": 1786910990,
+        "narHash": "sha256-DUKtXIVfy9AXTm9YPkTW6Orh07D4H1Vl9JFc1ubOz6Q=",
         "owner": "Fomiller",
         "repo": "flake-hub",
-        "rev": "1f55e133b1c67e0265d4eccebd8c8a696014839e",
+        "rev": "00c47a392aa283e0f5a8eebac7b832fea65b395c",
         "type": "github"
       },
       "original": {
         "dir": "golden-engine",
         "owner": "Fomiller",
-        "ref": "refs/tags/golden-engine-0.2.0",
+        "ref": "refs/tags/golden-engine-0.3.0",
         "repo": "flake-hub",
         "type": "github"
       }

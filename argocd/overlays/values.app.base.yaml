@@ -9,4 +9,4 @@ fullnameOverride: flake-hub-example-service
 replicas: 2
 
 image:
-  repository: 000000000000.dkr.ecr.us-east-1.amazonaws.com/charts/flake-hub-example-service
+  repository: 000000000000.dkr.ecr.us-east-1.amazonaws.com/flake-hub-example-service

@@ -6,7 +6,7 @@ turned on: `golden-base`, `golden-github`, `golden-service`, `golden-infra` and
 one, see
 [flake-hub-example](https://github.com/Fomiller/flake-hub-example).
 
-Everything comes out of one file. `repo.nix` is 28 lines, and it produces 22.
+Everything comes out of one file. `repo.nix` is 28 lines, and it produces 33.
 
 ## What is generated and what is not
 
@@ -16,11 +16,11 @@ Generated files carry a header naming the pack that owns them.
 | --- | --- | --- |
 | `.gitignore`, `.editorconfig`, `.envrc`, `justfile` | golden-base | managed |
 | `README.md` | golden-base | scaffold |
-| `CODEOWNERS`, `renovate.json`, `.github/workflows/generate.yml`, `.github/workflows/ci.yml` | golden-github | managed |
+| `.github/CODEOWNERS`, `renovate.json`, `.github/workflows/generate.yml`, `.github/workflows/ci.yml` | golden-github | managed |
 | `Dockerfile` | golden-service | managed |
-| `infra/live/root.hcl`, `infra/live/service.hcl`, `infra/live/*/account.hcl`, `.github/workflows/deploy-infra.yml` | golden-infra | managed |
-| `infra/live/*/README.md` | golden-infra | scaffold |
-| `helm/<chart>/Chart.yaml`, `helm/<chart>/templates/*`, `argocd/overlays/*/kustomization.yaml`, `.github/workflows/publish-chart.yml` | golden-argocd | managed |
+| `infra/live/root.hcl`, `infra/live/service.hcl`, `infra/live/tags.hcl`, `infra/live/version.hcl`, `infra/live/*/account.hcl`, `.github/workflows/deploy-infra.yml` | golden-infra | managed |
+| `infra/live/*/README.md`, `infra/live/*/terragrunt.stack.hcl` | golden-infra | scaffold |
+| `helm/<chart>/Chart.yaml`, `helm/<chart>/templates/*`, `argocd/overlays/*/kustomization.yaml`, `.github/workflows/publish-chart.yml`, `.github/workflows/publish-image.yml` | golden-argocd | managed |
 | `helm/<chart>/values.yaml`, `argocd/overlays/values.app.base.yaml`, `argocd/overlays/*/values.app.yaml` | golden-argocd | scaffold |
 
 Managed files are rewritten on every run. Scaffold files are written once and
@@ -29,10 +29,11 @@ then left alone — this README is one of them.
 Everything else is hand-written and stays that way:
 
 - `src/` — the service itself
-- `infra/units/**` and `infra/live/*/ecr/` — the terragrunt units. The packs
-  build the frame, never the units.
-- `argocd/applications/*.yaml` — the Argo CD Applications, one per environment,
-  each pointing at that environment's overlay in this repo
+- `infra/units/**` and `infra/stacks/**` — the terragrunt units and the wiring
+  between them. The packs build the frame, never the units.
+
+There are no Argo CD `Application` manifests in this repo. The homelab cluster
+has one ApplicationSet that points at `argocd/overlays/<env>` here.
 
 ## How one key reaches five files
 
@@ -45,8 +46,21 @@ Deployment. `deploy.replicas = 2` reaches both values files.
 
 ## How a deploy is put together
 
-The chart is at `helm/flake-hub-example-service/`, named after the repo.
-`publish-chart.yml` pushes it to ECR as an OCI artifact.
+Two ECR repositories, both at the registry root:
+
+- `flake-hub-example-service` — the image, pushed by `publish-image.yml`
+- `flake-hub-example-service-chart` — the chart, pushed by `publish-chart.yml`
+
+The chart is at `helm/flake-hub-example-service/`, but `Chart.yaml` names it
+`flake-hub-example-service-chart`. `helm push` reads the repository name out of
+the packaged chart, so the suffix has to be part of the chart's own name. The
+`-chart` suffix is trimmed back off inside the templates, so no rendered
+resource carries it.
+
+`publish-chart.yml` names no chart. The workflow walks `helm/*/Chart.yaml`, so
+a second chart here would be published with no workflow change.
+
+Both repositories are created by `infra/units/aws/common/ecr`.
 
 `argocd/overlays/<env>/kustomization.yaml` pulls that chart back down and
 inflates it with two values files: the shared
@@ -63,23 +77,41 @@ helm template dev helm/flake-hub-example-service \
   -f argocd/overlays/dev/values.app.yaml
 ```
 
-`argocd/applications/` is hand-written. Each Application points Argo CD at one
-overlay path in this repo.
+## The infra layout
+
+```
+infra/
+  live/
+    root.hcl  service.hcl  tags.hcl  version.hcl
+    <env>/
+      account.hcl
+      terragrunt.stack.hcl
+      README.md
+  stacks/aws/common/terragrunt.stack.hcl
+  units/aws/common/ecr/
+```
+
+Only those three files per environment are committed. `terragrunt stack run`
+writes the unit directories into `infra/live/<env>/`, and they are gitignored.
+
+`aws/common` means once per account, not once per environment. Both
+environments here point at the same account, so dev's `terragrunt.stack.hcl`
+declares the stack and prod's declares nothing.
 
 ## Working on it
 
 ```sh
 just build      # go build -o bin/ ./src/...
 just test       # go test ./src/... -race -cover
-just plan       # terragrunt plan, dev by default
+just plan       # terragrunt stack run plan, dev by default
 just generate   # rewrite the generated files after editing repo.nix
 ```
 
 ## A note on CI
 
-`deploy-infra.yml` and `publish-chart.yml` are disabled in this repo. They are
-real and correctly wired, but they assume an AWS account that does not exist,
-so leaving them on would just paint the repo red. `CI` and `Generate` run for
-real.
+`deploy-infra.yml`, `publish-chart.yml` and `publish-image.yml` are disabled in
+this repo. They are real and correctly wired, but they assume an AWS account
+that does not exist, so leaving them on would just paint the repo red. `CI` and
+`Generate` run for real.
 
 Docs: https://fomiller.github.io/flake-hub/

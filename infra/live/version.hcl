@@ -5,6 +5,6 @@
 # ---------------------------------------------------------------------------
 
 locals {
-  environment = "prod"
-  region      = "us-east-1"
+  terraform_version    = ">=1.11.0"
+  aws_provider_version = ">=5.0.0"
 }

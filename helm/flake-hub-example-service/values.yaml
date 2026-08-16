@@ -3,5 +3,5 @@
 replicas: 2
 
 image:
-  repository: charts/flake-hub-example-service
+  repository: flake-hub-example-service
   tag: latest

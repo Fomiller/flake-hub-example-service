@@ -5,6 +5,8 @@
 # ---------------------------------------------------------------------------
 
 locals {
-  environment = "prod"
-  region      = "us-east-1"
+  default_tags = {
+    email       = "forrestmillerj@gmail.com"
+    managedWith = "terraform"
+  }
 }

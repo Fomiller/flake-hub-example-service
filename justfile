@@ -1,6 +1,8 @@
+# ---------------------------------------------------------------------------
 # GENERATED FILE — managed by flake-hub (golden-base).
 # Do not edit manually: `nix run .#generate` overwrites it.
 # To change it, edit repo.nix, or the template in the pack that owns it.
+# ---------------------------------------------------------------------------
 
 import? 'just/base.just'
 
@@ -19,7 +21,7 @@ test:
     go test ./src/... -race -cover
 
 plan env="dev":
-    cd infra/live/{{env}} && terragrunt run-all plan
+    cd infra/live/{{env}} && terragrunt stack run plan
 
 apply env="dev":
-    cd infra/live/{{env}} && terragrunt run-all apply
+    cd infra/live/{{env}} && terragrunt stack run apply

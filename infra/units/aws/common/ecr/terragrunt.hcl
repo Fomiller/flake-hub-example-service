@@ -2,10 +2,7 @@ include "root" {
   path = find_in_parent_folders("root.hcl")
 }
 
-terraform {
-  source = "${get_repo_root()}/infra/units/ecr"
-}
-
 inputs = {
+  asset_name      = "ecr"
   repository_name = "flake-hub-example-service"
 }

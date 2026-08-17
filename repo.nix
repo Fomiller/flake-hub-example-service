@@ -1,9 +1,14 @@
 {
   name = "flake-hub-example-service";
+  namePrefix = "flake-hub-";
   description = "A Go service managed by flake-hub, with infra and a chart";
-  codeowners = [ "@Fomiller" ];
 
   language = "go";
+
+  github = {
+    codeowners = [ "@Fomiller" ];
+    roleToAssume = "arn:aws:iam::000000000000:role/github-actions";
+  };
 
   service = {
     container = true;
@@ -11,12 +16,12 @@
   };
 
   infra = {
-    envs = [ "dev" ];
     dopplerProject = "flake-hub-example-service";
-    stateBucket = "fomiller-tfstate-all";
     ownerEmail = "forrestmillerj@gmail.com";
-    awsRegion = "us-east-1";
-    tailscale = false;
+    environments.dev = {
+      stateBucket = "fomiller-tfstate-all";
+      profile = "fomiller-dev";
+    };
   };
 
   docs = {
@@ -25,9 +30,8 @@
   };
 
   argocd = {
-    envs = [ "dev" ];
+    environments = [ "dev" ];
     registry = "000000000000.dkr.ecr.us-east-1.amazonaws.com";
-    roleToAssume = "arn:aws:iam::000000000000:role/github-actions";
     replicas = 2;
   };
 }

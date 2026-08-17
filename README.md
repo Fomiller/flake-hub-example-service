@@ -6,7 +6,7 @@ turned on: `golden-base`, `golden-github`, `golden-service`, `golden-infra`,
 smallest possible one, see
 [flake-hub-example](https://github.com/Fomiller/flake-hub-example).
 
-Everything comes out of one file. `repo.nix` is 33 lines, and it produces 31.
+Everything comes out of one file. `repo.nix` is 37 lines, and it produces 32.
 
 ## What is generated and what is not
 
@@ -15,7 +15,7 @@ Generated files carry a header naming the pack that owns them.
 | Path | Owner | Class |
 | --- | --- | --- |
 | `.gitignore`, `justfile` | golden-base | managed |
-| `README.md` | golden-base | scaffold |
+| `README.md`, `AGENTS.md` | golden-base, golden-github | scaffold |
 | `.github/CODEOWNERS`, `renovate.json`, `.github/workflows/generate.yml`, `.github/workflows/ci.yml` | golden-github | managed |
 | `Dockerfile` | golden-service | managed |
 | `infra/live/root.hcl`, `infra/live/service.hcl`, `infra/live/tags.hcl`, `infra/live/version.hcl`, `infra/live/*/account.hcl`, `.github/workflows/deploy-infra.yml` | golden-infra | managed |
@@ -69,7 +69,7 @@ inflates it with two values files: the shared
 `argocd/overlays/values.app.base.yaml` first, then the environment's own
 `values.app.yaml`. Later wins on any key both set.
 
-Only `dev` is on. `argocd.envs` decides which overlays exist, and prod is off
+Only `dev` is on. `argocd.environments` decides which overlays exist, and prod is off
 by default — add `"prod"` to the list and the prod overlay appears with its own
 `values.app.yaml`. The base asks for 2 replicas and dev overrides it down to 1,
 which is what the two-file split is for. Render it by hand to see:
@@ -110,6 +110,13 @@ just plan       # terragrunt stack run plan, dev by default
 just docs       # serve the book at localhost:3000
 just generate   # rewrite the generated files after editing repo.nix
 ```
+
+## Turning a pack off
+
+`infra.enabled`, `argocd.enabled` and `docs.enabled` each delete their whole
+directory when set to false — hand-written files included, not just the
+generated ones. That is deliberate: `infra/units/**` with no `infra/live/` frame
+is dead code. Nothing here sets them, so all three trees stay.
 
 ## The book
 

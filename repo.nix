@@ -11,7 +11,7 @@
   };
 
   infra = {
-    envs = [ "dev" "prod" ];
+    envs = [ "dev" ];
     dopplerProject = "flake-hub-example-service";
     stateBucket = "fomiller-tfstate-all";
     ownerEmail = "forrestmillerj@gmail.com";
@@ -19,8 +19,8 @@
     tailscale = false;
   };
 
-  deploy = {
-    envs = [ "dev" "prod" ];
+  argocd = {
+    envs = [ "dev" ];
     registry = "000000000000.dkr.ecr.us-east-1.amazonaws.com";
     roleToAssume = "arn:aws:iam::000000000000:role/github-actions";
     replicas = 2;

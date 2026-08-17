@@ -54,35 +54,3 @@ jobs:
       use-tailscale: false
       tailscale-tags: tag:ci
     secrets: inherit
-  plan-prod:
-    name: Plan Infra (prod)
-    if: ${{ github.event_name == 'pull_request' }}
-    permissions:
-      id-token: write
-      contents: read
-    uses: Fomiller/gh-actions/.github/workflows/terragrunt.yaml@main
-    with:
-      environment: prod
-      infra-dir: infra/live/prod
-      doppler-project: flake-hub-example-service
-      tg-plan: true
-      use-oidc: true
-      use-tailscale: false
-      tailscale-tags: tag:ci
-    secrets: inherit
-
-  apply-prod:
-    name: Apply Infra (prod)
-    if: ${{ github.event_name == 'push' }}
-    permissions:
-      id-token: write
-      contents: read
-    uses: Fomiller/gh-actions/.github/workflows/terragrunt.yaml@main
-    with:
-      environment: prod
-      infra-dir: infra/live/prod
-      doppler-project: flake-hub-example-service
-      use-oidc: true
-      use-tailscale: false
-      tailscale-tags: tag:ci
-    secrets: inherit

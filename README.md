@@ -6,7 +6,7 @@ turned on: `golden-base`, `golden-github`, `golden-service`, `golden-infra` and
 one, see
 [flake-hub-example](https://github.com/Fomiller/flake-hub-example).
 
-Everything comes out of one file. `repo.nix` is 28 lines, and it produces 33.
+Everything comes out of one file. `repo.nix` is 28 lines, and it produces 26.
 
 ## What is generated and what is not
 
@@ -14,7 +14,7 @@ Generated files carry a header naming the pack that owns them.
 
 | Path | Owner | Class |
 | --- | --- | --- |
-| `.gitignore`, `.editorconfig`, `.envrc`, `justfile` | golden-base | managed |
+| `.gitignore`, `justfile` | golden-base | managed |
 | `README.md` | golden-base | scaffold |
 | `.github/CODEOWNERS`, `renovate.json`, `.github/workflows/generate.yml`, `.github/workflows/ci.yml` | golden-github | managed |
 | `Dockerfile` | golden-service | managed |
@@ -42,7 +42,7 @@ steps in `ci.yml`, the base images in the `Dockerfile`, and `bin/` in
 `.gitignore`. Nothing else in `repo.nix` mentions Go.
 
 `service.port = 8080` reaches the `Dockerfile` and the chart's Service and
-Deployment. `deploy.replicas = 2` reaches both values files.
+Deployment. `argocd.replicas = 2` reaches both values files.
 
 ## How a deploy is put together
 
@@ -67,9 +67,10 @@ inflates it with two values files: the shared
 `argocd/overlays/values.app.base.yaml` first, then the environment's own
 `values.app.yaml`. Later wins on any key both set.
 
-That split does real work here. The base asks for 2 replicas; dev overrides it
-to 1 and prod does not, so prod keeps 2. dev runs `:latest`, prod runs
-`:v0.1.0`. Render either by hand to see it:
+Only `dev` is on. `argocd.envs` decides which overlays exist, and prod is off
+by default — add `"prod"` to the list and the prod overlay appears with its own
+`values.app.yaml`. The base asks for 2 replicas and dev overrides it down to 1,
+which is what the two-file split is for. Render it by hand to see:
 
 ```sh
 helm template dev helm/flake-hub-example-service \
@@ -94,9 +95,9 @@ infra/
 Only those three files per environment are committed. `terragrunt stack run`
 writes the unit directories into `infra/live/<env>/`, and they are gitignored.
 
-`aws/common` means once per account, not once per environment. Both
-environments here point at the same account, so dev's `terragrunt.stack.hcl`
-declares the stack and prod's declares nothing.
+`aws/common` means once per account, not once per environment. Only `dev`
+exists here, so it declares the stack. A second environment on the same account
+would declare nothing.
 
 ## Working on it
 

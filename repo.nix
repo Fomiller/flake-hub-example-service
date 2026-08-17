@@ -19,6 +19,11 @@
     tailscale = false;
   };
 
+  docs = {
+    authors = [ "Forrest Miller" ];
+    repoUrl = "https://github.com/Fomiller/flake-hub-example-service";
+  };
+
   argocd = {
     envs = [ "dev" ];
     registry = "000000000000.dkr.ecr.us-east-1.amazonaws.com";

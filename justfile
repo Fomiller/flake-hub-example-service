@@ -25,3 +25,9 @@ plan env="dev":
 
 apply env="dev":
     cd infra/live/{{env}} && terragrunt stack run apply
+
+docs:
+    mdbook serve docs --open
+
+docs-build:
+    mdbook build docs

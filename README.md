@@ -1,12 +1,12 @@
 # flake-hub-example-service
 
 A Go service with every [flake-hub](https://github.com/Fomiller/flake-hub) pack
-turned on: `golden-base`, `golden-github`, `golden-service`, `golden-infra` and
-`golden-argocd`. This is the fully built-out example. For the smallest possible
-one, see
+turned on: `golden-base`, `golden-github`, `golden-service`, `golden-infra`,
+`golden-argocd` and `golden-docs`. This is the fully built-out example. For the
+smallest possible one, see
 [flake-hub-example](https://github.com/Fomiller/flake-hub-example).
 
-Everything comes out of one file. `repo.nix` is 28 lines, and it produces 26.
+Everything comes out of one file. `repo.nix` is 33 lines, and it produces 31.
 
 ## What is generated and what is not
 
@@ -22,6 +22,8 @@ Generated files carry a header naming the pack that owns them.
 | `infra/live/*/README.md`, `infra/live/*/terragrunt.stack.hcl` | golden-infra | scaffold |
 | `helm/<chart>/Chart.yaml`, `helm/<chart>/templates/*`, `argocd/overlays/*/kustomization.yaml`, `.github/workflows/publish-chart.yml`, `.github/workflows/publish-image.yml` | golden-argocd | managed |
 | `helm/<chart>/values.yaml`, `argocd/overlays/values.app.base.yaml`, `argocd/overlays/*/values.app.yaml` | golden-argocd | scaffold |
+| `docs/book.toml`, `docs/theme/catppuccin.css`, `.github/workflows/docs.yml` | golden-docs | managed |
+| `docs/src/SUMMARY.md`, `docs/src/introduction.md` | golden-docs | scaffold |
 
 Managed files are rewritten on every run. Scaffold files are written once and
 then left alone — this README is one of them.
@@ -105,8 +107,16 @@ would declare nothing.
 just build      # go build -o bin/ ./src/...
 just test       # go test ./src/... -race -cover
 just plan       # terragrunt stack run plan, dev by default
+just docs       # serve the book at localhost:3000
 just generate   # rewrite the generated files after editing repo.nix
 ```
+
+## The book
+
+`golden-docs` seeds an mdbook site under `docs/`. `book.toml`, the Catppuccin
+stylesheet and the workflow are managed; the pages themselves are scaffold, so
+they are written once and then this repo's to edit. `docs.yml` publishes to
+Pages on push to main.
 
 ## A note on CI
 

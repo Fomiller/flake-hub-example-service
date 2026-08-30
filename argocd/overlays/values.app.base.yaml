@@ -16,3 +16,12 @@ image:
 # name has to match what that ClusterExternalSecret creates.
 imagePullSecrets:
   - name: ecr-image-pull
+
+# A request the scheduler can weigh. No CPU limit on purpose: throttling a
+# request-sized container is worse than letting it burst on an idle node.
+resources:
+  requests:
+    cpu: 10m
+    memory: 32Mi
+  limits:
+    memory: 128Mi

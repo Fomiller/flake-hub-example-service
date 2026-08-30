@@ -37,3 +37,11 @@ spec:
               path: /healthz
               port: 8080
             initialDelaySeconds: 5
+          {{- /* Omitted when empty so a local render stays unconstrained. A
+                 deployed overlay sets them: without a request the scheduler
+                 treats the pod as free and the descheduler has nothing to
+                 weigh. */}}
+          {{- with .Values.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}

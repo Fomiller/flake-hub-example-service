@@ -21,7 +21,6 @@
     ownerEmail = "forrestmillerj@gmail.com";
     environments.dev = {
       stateBucket = "fomiller-terraform-state-dev";
-      profile = "fomiller-dev";
     };
   };
 

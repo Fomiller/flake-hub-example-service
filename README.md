@@ -6,7 +6,7 @@ turned on: `golden-base`, `golden-github`, `golden-service`, `golden-infra`,
 smallest possible one, see
 [flake-hub-example](https://github.com/Fomiller/flake-hub-example).
 
-Everything comes out of one file. `repo.nix` is 37 lines, and it produces 35.
+Everything comes out of one file. `repo.nix` is 36 lines, and it produces 35.
 
 ## What is generated and what is not
 
@@ -138,8 +138,9 @@ Pages on push to main.
 ## A note on CI
 
 `deploy-infra.yml`, `publish-chart.yml` and `publish-image.yml` are disabled in
-this repo. They are real and correctly wired, but they assume an AWS account
-that does not exist, so leaving them on would just paint the repo red. `CI` and
-`Generate` run for real.
+this repo. They are real and correctly wired, and they now resolve a real role
+through OIDC. What is missing is everything they would act on: the ECR
+repositories and the terragrunt state, neither of which has been applied. So
+leaving them on would just paint the repo red. `CI` and `Generate` run for real.
 
 Docs: https://fomiller.github.io/flake-hub/

@@ -21,8 +21,6 @@ jobs:
       contents: read
     with:
       repository: flake-hub-example-service
-      role-to-assume: arn:aws:iam::000000000000:role/github-actions
-      aws-region: us-east-1
       platforms: linux/amd64
       # A pull request builds the image and throws it away. Only main pushes.
       push: ${{ github.event_name == 'push' }}

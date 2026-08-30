@@ -1,4 +1,4 @@
-{{- /* GENERATED FILE — managed by flake-hub (golden-argocd). */ -}}
+{{- /* Written once, then it is yours. */ -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -13,8 +13,18 @@ spec:
       labels:
         {{- include "chart.selectorLabels" . | nindent 8 }}
     spec:
+      {{- /* Omitted entirely when empty, so a chart rendered against a public
+             registry carries no reference to a Secret that isn't there. */}}
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       containers:
         - name: app
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          {{- with .Values.args }}
+          args:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           ports:
             - containerPort: 8080

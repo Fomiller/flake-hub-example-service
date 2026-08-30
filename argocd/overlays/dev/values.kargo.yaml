@@ -1,0 +1,52 @@
+# Written once, then it is yours. `nix run .#generate` never touches it again.
+#
+# The dev promotion pipeline, rendered by kargo-project-chart. See that chart's
+# README for every field; what is here is the smallest pipeline that works.
+
+project:
+  name: flake-hub-example-service
+  # Promotions commit back into this repo. The chart version and the image tag
+  # both live in argocd/overlays/, so a promotion touches only files a reader
+  # of this repo can find.
+  repoURL: https://github.com/Fomiller/flake-hub-example-service.git
+
+services:
+  - name: flake-hub-example-service
+    image:
+      repoURL: 695434033664.dkr.ecr.us-east-1.amazonaws.com/flake-hub-example-service
+
+charts:
+  - name: flake-hub-example-service-chart
+    chart:
+      repoURL: oci://695434033664.dkr.ecr.us-east-1.amazonaws.com/flake-hub-example-service-chart
+
+warehouses:
+  - name: flake-hub-example-service
+    interval: 5m0s
+    # One warehouse subscribing to both, so a promotion carries a matched pair
+    # rather than letting the image and the chart drift a release apart.
+    services: [flake-hub-example-service]
+    charts: [flake-hub-example-service-chart]
+    # publish-image.yml pushes the short git sha and a moving `latest`. Only
+    # the sha identifies a build, so `latest@sha256:...` would be an immutable
+    # reference under an unreadable name.
+    allowTagsRegex: '^[0-9a-f]{7,40}$'
+    updatePaths:
+      - path: argocd/overlays/dev/values.app.yaml
+        rootRelative: true
+        updates:
+          - { key: image.tag, source: flake-hub-example-service }
+      - path: argocd/overlays/dev/kustomization.yaml
+        rootRelative: true
+        updates:
+          - { key: helmCharts.0.version, source: flake-hub-example-service-chart }
+
+stages:
+  - name: dev
+    color: green
+    autoPromotion: true
+    warehouses: [flake-hub-example-service]
+    env: dev
+    git:
+      repoURL: https://github.com/Fomiller/flake-hub-example-service.git
+      branch: main

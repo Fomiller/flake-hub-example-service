@@ -8,6 +8,8 @@
   github = {
     codeowners = [ "@Fomiller" ];
     roleToAssume = "arn:aws:iam::000000000000:role/github-actions";
+    publishImage = true;
+    publishChart = true;
   };
 
   service = {
@@ -30,8 +32,6 @@
   };
 
   argocd = {
-    environments = [ "dev" ];
-    registry = "000000000000.dkr.ecr.us-east-1.amazonaws.com";
-    replicas = 2;
+    environment = "dev";
   };
 }

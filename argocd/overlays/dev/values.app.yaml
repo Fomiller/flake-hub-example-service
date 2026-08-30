@@ -6,4 +6,4 @@
 replicas: 1
 
 image:
-  tag: latest
+  tag: 312ddb6@sha256:ad95017b9b639125498334267a6250418784a694fe46d00d44b165e50299844d

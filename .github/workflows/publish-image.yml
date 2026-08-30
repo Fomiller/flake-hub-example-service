@@ -8,20 +8,28 @@ name: Publish image
 
 on:
   pull_request:
-    paths: [src/**, Dockerfile]
+    paths: [src/**, Dockerfile, .github/workflows/publish-image.yml]
   push:
     branches: [main]
-    paths: [src/**, Dockerfile]
+    paths: [src/**, Dockerfile, .github/workflows/publish-image.yml]
 
 jobs:
   image:
     uses: Fomiller/gh-actions/.github/workflows/docker-ecr.yaml@main
     permissions:
       id-token: write
-      contents: read
+      # The release is tagged in this repo.
+      contents: write
     with:
       repository: flake-hub-example-service
       platforms: linux/amd64
       # A pull request builds the image and throws it away. Only main pushes.
       push: ${{ github.event_name == 'push' }}
+      # One immutable tag per release, computed from conventional commits since
+      # this stream's last tag. The chart is a separate stream, so only the
+      # paths above count toward the bump.
+      release-tag-prefix: flake-hub-example-service-v
+      release-paths: |
+        src
+        Dockerfile
     secrets: inherit

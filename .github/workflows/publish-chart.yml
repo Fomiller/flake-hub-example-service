@@ -8,10 +8,10 @@ name: Publish chart
 
 on:
   pull_request:
-    paths: [helm/**]
+    paths: [helm/**, .github/workflows/publish-chart.yml]
   push:
     branches: [main]
-    paths: [helm/**]
+    paths: [helm/**, .github/workflows/publish-chart.yml]
 
 jobs:
   chart:
@@ -20,7 +20,12 @@ jobs:
     uses: Fomiller/gh-actions/.github/workflows/helm-ecr.yaml@main
     permissions:
       id-token: write
-      contents: read
+      # The release is tagged in this repo.
+      contents: write
     with:
       push: ${{ github.event_name == 'push' }}
+      # Each chart's version is computed from conventional commits touching its
+      # own directory, tagged <chart>-v<version>, and stamped into Chart.yaml at
+      # build time. The committed version is only the starting point.
+      release-versioning: true
     secrets: inherit

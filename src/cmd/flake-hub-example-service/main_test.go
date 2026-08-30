@@ -14,3 +14,12 @@ func TestHandler(t *testing.T) {
 		t.Fatalf("body = %q, want %q", got, "ok\n")
 	}
 }
+
+func TestHealth(t *testing.T) {
+	w := httptest.NewRecorder()
+	health(w, httptest.NewRequest(http.MethodGet, "/healthz", nil))
+
+	if got := w.Code; got != http.StatusOK {
+		t.Fatalf("status = %d, want %d", got, http.StatusOK)
+	}
+}

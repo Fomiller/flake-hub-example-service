@@ -7,6 +7,7 @@
 import? 'just/base.just'
 
 project := "flake-hub-example-service"
+infraDir := "infra/live/dev"
 
 fetch:
     curl -sSfL https://raw.githubusercontent.com/Fomiller/justfiles/refs/heads/main/base.just > just/base.just
@@ -20,11 +21,13 @@ build:
 test:
     go test ./src/... -race -cover
 
-plan env="dev":
-    cd infra/live/{{env}} && terragrunt stack run plan
+plan-all:
+    doppler run --name-transformer tf-var -- \
+    terragrunt stack run --tf-path terraform --working-dir {{infraDir}} plan
 
-apply env="dev":
-    cd infra/live/{{env}} && terragrunt stack run apply
+apply-all:
+    doppler run --name-transformer tf-var -- \
+    terragrunt --non-interactive stack run --tf-path terraform --working-dir {{infraDir}} apply
 
 docs:
     mdbook serve docs --open

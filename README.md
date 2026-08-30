@@ -6,7 +6,7 @@ turned on: `golden-base`, `golden-github`, `golden-service`, `golden-infra`,
 smallest possible one, see
 [flake-hub-example](https://github.com/Fomiller/flake-hub-example).
 
-Everything comes out of one file. `repo.nix` is 37 lines, and it produces 32.
+Everything comes out of one file. `repo.nix` is 37 lines, and it produces 35.
 
 ## What is generated and what is not
 
@@ -16,12 +16,12 @@ Generated files carry a header naming the pack that owns them.
 | --- | --- | --- |
 | `.gitignore`, `justfile` | golden-base | managed |
 | `README.md`, `AGENTS.md` | golden-base, golden-github | scaffold |
-| `.github/CODEOWNERS`, `renovate.json`, `.github/workflows/generate.yml`, `.github/workflows/ci.yml` | golden-github | managed |
+| `.github/CODEOWNERS`, `renovate.json`, `.github/workflows/generate.yml`, `.github/workflows/ci.yml`, `.github/workflows/publish-image.yml`, `.github/workflows/publish-chart.yml` | golden-github | managed |
 | `Dockerfile` | golden-service | managed |
 | `infra/live/root.hcl`, `infra/live/service.hcl`, `infra/live/tags.hcl`, `infra/live/version.hcl`, `infra/live/*/account.hcl`, `.github/workflows/deploy-infra.yml` | golden-infra | managed |
 | `infra/live/*/README.md`, `infra/live/*/terragrunt.stack.hcl` | golden-infra | scaffold |
-| `helm/<chart>/Chart.yaml`, `helm/<chart>/templates/*`, `argocd/overlays/*/kustomization.yaml`, `.github/workflows/publish-chart.yml`, `.github/workflows/publish-image.yml` | golden-argocd | managed |
-| `helm/<chart>/values.yaml`, `argocd/overlays/values.app.base.yaml`, `argocd/overlays/*/values.app.yaml` | golden-argocd | scaffold |
+| `argocd.yaml` | golden-argocd | managed |
+| `helm/<chart>/Chart.yaml`, `helm/<chart>/values.yaml`, `helm/<chart>/templates/*`, `argocd/overlays/values.app.base.yaml`, `argocd/overlays/*/kustomization.yaml`, `argocd/overlays/*/values.app.yaml`, `argocd/overlays/*/values.kargo.yaml` | golden-argocd | scaffold |
 | `docs/book.toml`, `docs/theme/catppuccin.css`, `.github/workflows/docs.yml` | golden-docs | managed |
 | `docs/src/SUMMARY.md`, `docs/src/introduction.md` | golden-docs | scaffold |
 
@@ -34,8 +34,12 @@ Everything else is hand-written and stays that way:
 - `infra/units/**` and `infra/stacks/**` — the terragrunt units and the wiring
   between them. The packs build the frame, never the units.
 
-There are no Argo CD `Application` manifests in this repo. The homelab cluster
-has one ApplicationSet that points at `argocd/overlays/<env>` here.
+There is no Argo CD `Application` manifest in this repo. The homelab cluster has
+one ApplicationSet that reads `argocd.yaml` from each repo it lists and builds
+the Application from it, pointed at `argocd/overlays/<env>` here. `argocd.yaml`
+is the only managed file golden-argocd writes — everything it deploys is
+scaffold, because what a service deploys changes for reasons `repo.nix` never
+sees.
 
 ## How one key reaches five files
 
@@ -69,9 +73,15 @@ inflates it with two values files: the shared
 `argocd/overlays/values.app.base.yaml` first, then the environment's own
 `values.app.yaml`. Later wins on any key both set.
 
-Only `dev` is on. `argocd.environments` decides which overlays exist, and prod is off
-by default — add `"prod"` to the list and the prod overlay appears with its own
-`values.app.yaml`. The base asks for 2 replicas and dev overrides it down to 1,
+The same kustomization installs `kargo-project-chart` beside the workload, so a
+service is one Application rather than two. Kargo rewrites the chart versions in
+that file on every promotion, which is why the overlay is scaffold — a
+regenerate would put the bootstrap versions back and roll the environment
+backwards. `argocd.kargo = false` leaves it out.
+
+`argocd.environment` picks the one environment this repo deploys to, and only
+that overlay is seeded. It is `"dev"` here; setting it to `"prod"` seeds the prod
+overlay instead. The base asks for 2 replicas and dev overrides it down to 1,
 which is what the two-file split is for. Render it by hand to see:
 
 ```sh
@@ -106,7 +116,7 @@ would declare nothing.
 ```sh
 just build      # go build -o bin/ ./src/...
 just test       # go test ./src/... -race -cover
-just plan       # terragrunt stack run plan, dev by default
+just plan-all   # terragrunt stack run plan against infra/live/dev
 just docs       # serve the book at localhost:3000
 just generate   # rewrite the generated files after editing repo.nix
 ```

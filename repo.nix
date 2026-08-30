@@ -20,7 +20,7 @@
     dopplerProject = "flake-hub-example-service";
     ownerEmail = "forrestmillerj@gmail.com";
     environments.dev = {
-      stateBucket = "fomiller-tfstate-all";
+      stateBucket = "fomiller-terraform-state-dev";
       profile = "fomiller-dev";
     };
   };

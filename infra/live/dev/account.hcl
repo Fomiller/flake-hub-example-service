@@ -9,5 +9,5 @@ locals {
   region      = "us-east-1"
   profile     = "fomiller-dev"
   # Overrides the name root.hcl would derive. variables.hcl still wins.
-  state_bucket = "fomiller-tfstate-all"
+  state_bucket = "fomiller-terraform-state-dev"
 }

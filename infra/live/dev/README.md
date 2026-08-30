@@ -11,9 +11,13 @@ run` from `infra/stacks/` and `infra/units/`, and is gitignored. Do not edit a
 unit here — edit it under `infra/units/`.
 
 ```sh
-just plan dev
-just apply dev
+just plan-all
+just apply-all
 ```
 
-The AWS account this points at does not exist, so `just plan` will fail on
-credentials. The layout is the point, not the plan.
+State goes to `fomiller-terraform-state-dev` under a `flake-hub-example-service/`
+prefix, which is what keeps the repos sharing that bucket apart.
+
+Both recipes wrap terragrunt in `doppler run`. No unit here reads a secret yet,
+so `terragrunt stack run --tf-path terraform --working-dir infra/live/dev plan`
+with `AWS_PROFILE=dev` works on its own.

@@ -5,3 +5,6 @@ replicas: 2
 image:
   repository: flake-hub-example-service
   tag: latest
+
+# Empty renders no resources block at all. The deployed overlay sets them.
+resources: {}

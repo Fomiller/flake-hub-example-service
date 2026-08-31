@@ -1,3 +1,5 @@
+# Written once, then it is yours. `nix run .#generate` never touches it again.
+#
 # The aws units that are shared across environments. "common" means deployed
 # once per account, not once per environment.
 

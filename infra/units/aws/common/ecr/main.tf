@@ -1,3 +1,5 @@
+# Written once, then it is yours. `nix run .#generate` never touches it again.
+#
 # Two repositories: one for the image, one for the chart. The chart's name has
 # to match Chart.yaml, which is a single value for the whole repo, so these are
 # account-level and not per-environment.

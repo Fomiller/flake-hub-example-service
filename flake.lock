@@ -1016,17 +1016,17 @@
       },
       "locked": {
         "dir": "golden-github",
-        "lastModified": 1792509132,
-        "narHash": "sha256-tg7DVOD7KAjrsq7eCPkX2s2+HLhBNUbRQ+ZfwGrTOzU=",
+        "lastModified": 1792519311,
+        "narHash": "sha256-wbQ/XyPwj761OE6/ZFHWB+0KN+UVufpupJTQtDwljF0=",
         "owner": "Fomiller",
         "repo": "flake-hub",
-        "rev": "b99f152beedd259af4b89eba0c474a808572978e",
+        "rev": "fb574d3a44d05a3cd7f5993e53d291552e822ef5",
         "type": "github"
       },
       "original": {
         "dir": "golden-github",
         "owner": "Fomiller",
-        "ref": "refs/tags/golden-github-0.10.0",
+        "ref": "refs/tags/golden-github-0.11.0",
         "repo": "flake-hub",
         "type": "github"
       }
